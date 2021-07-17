@@ -21,7 +21,6 @@ class SeminarViewSet(viewsets.GenericViewSet):
 
 
     def get_permissions(self):
-        # TODO
         if self.action in ('create', 'update'):
             return (IsInstructor(), )
         elif self.action == 'user' and self.request.method == 'DELETE':

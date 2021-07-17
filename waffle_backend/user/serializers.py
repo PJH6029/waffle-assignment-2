@@ -38,9 +38,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        # TODO deserialize할 때 들어올 수 있는 fields?
 
-        # TODO request 받으면, deserialize해서 처리한 후 response에 넘길 정보를 serialize해서 보냄
+        # request 받으면, deserialize해서 처리한 후 response에 넘길 정보를 serialize해서 보냄
         fields = (
             'id',
             'username',
@@ -154,9 +153,11 @@ class UserSerializer(serializers.ModelSerializer):
                 participant_profile.save()
         if hasattr(user, UserSeminar.INSTRUCTOR):
             # instructor
-            instructor_profile = user.instructor
-            company = validated_data.pop('company')
-            year = validated_data.pop('year')
+            instructor_profile = user.instructor  # instructor: related_name!!
+
+            # update는 partial이므로 pop 대신 get
+            company = validated_data.get('company')
+            year = validated_data.get('year')
             if company is not None or year:
                 if company is not None:
                     instructor_profile.company = company

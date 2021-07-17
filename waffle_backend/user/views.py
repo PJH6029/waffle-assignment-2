@@ -79,6 +79,7 @@ class UserViewSet(viewsets.GenericViewSet):
         data = request.data.copy()
         data.pop('accepted', None)
 
+        # partial=True때문에 일부만 받아와도 가능!
         serializer = self.get_serializer(user, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.update(user, serializer.validated_data)

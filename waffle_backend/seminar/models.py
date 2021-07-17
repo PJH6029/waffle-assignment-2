@@ -29,7 +29,6 @@ class UserSeminar(models.Model):
     # related_name: 역참조시 이용(User -> UserSeminar 접근할 때)
     user = models.ForeignKey(User, related_name='user_seminars', on_delete=models.CASCADE)
     seminar = models.ForeignKey(Seminar, related_name='user_seminars', on_delete=models.CASCADE)
-    # TODO db_index?
     role = models.CharField(max_length=100, choices=ROLE_CHOICES, db_index=True)
 
     is_active = models.BooleanField(default=True)
