@@ -76,8 +76,10 @@ class UserViewSet(viewsets.GenericViewSet):
             return Response({"error": "Can't update other Users information"}, status=status.HTTP_403_FORBIDDEN)
 
         user = request.user
+        data = request.data.copy()
+        data.pop('accepted', None)
 
-        serializer = self.get_serializer(user, data=request.data, partial=True)
+        serializer = self.get_serializer(user, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.update(user, serializer.validated_data)
         return Response(serializer.data)

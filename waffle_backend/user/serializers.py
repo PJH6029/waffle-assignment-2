@@ -10,6 +10,8 @@ from seminar.serializers import SeminarAsParticipantSerializer, SeminarAsInstruc
 
 
 class UserSerializer(serializers.ModelSerializer):
+    # TODO required: deserialize할 때만 확인??
+
     # read한다: db를 read한다 -> response를 준다
     # write한다: db에 write한다(create, update) -> request를 deserialize한다
 
@@ -84,11 +86,11 @@ class UserSerializer(serializers.ModelSerializer):
 
         # validate year
         # TODO unnecessary?
-        '''
+
         year = data.get('year')
-        if year <= 0:
+        if year and year <= 0:
             raise serializers.ValidationError("Year should be a positive number")
-        '''
+
 
         # validate role
         role = data.get('role')
@@ -137,6 +139,7 @@ class UserSerializer(serializers.ModelSerializer):
             )
         return user
 
+    @transaction.atomic
     def update(self, user, validated_data):
         print("DEBUG: UserSerializer.update()")
 
@@ -164,7 +167,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ParticipantProfileSerializer(serializers.ModelSerializer):
-    # TODO Serializer를 read로 쓸 때랑 write로 쓸 때 차이점 알아보기
     # default = True가 필요함. objects.create()에 accepted를 안주면 models.py에 의해 기본이 True이지만,
     # Serializer에서 accepted를 주므로 이 값으로 덮어씌워짐. 그런데, 이 Field의 기본값이 False이면 결국 db엔 False가 들어감
     accepted = serializers.BooleanField(default=True, required=False)
@@ -178,7 +180,7 @@ class ParticipantProfileSerializer(serializers.ModelSerializer):
             'university',
             'accepted',
             'seminars',
-            'user_id', # write 용도?
+            'user_id',  # write 용도?
         )
 
     def get_seminars(self, participant_profile):
@@ -206,7 +208,6 @@ class InstructorProfileSerializer(serializers.ModelSerializer):
     def get_charge(self, instructor_profile):
         # last() 어차피 0개 아니면 1개일텐데, try handle하는 것 보단, last() 이용 -> 없으면 None 반환
         instructor_seminar = instructor_profile.user.user_seminars.filter(role=UserSeminar.INSTRUCTOR).last()
-        # TODO 왜 여기는 1개? charge의 의미 -> 담당하는 seminar
         if instructor_seminar:
             return SeminarAsInstructorSerializer(instructor_seminar, context=self.context).data
         return None

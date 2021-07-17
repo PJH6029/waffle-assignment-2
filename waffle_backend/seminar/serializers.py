@@ -3,7 +3,7 @@ from rest_framework import serializers
 from seminar.models import UserSeminar, Seminar
 
 class SeminarSerializer(serializers.ModelSerializer):
-    time = serializers.TimeField(format="%H:%M")
+    time = serializers.TimeField(format="%H:%M", input_formats=['%H:%M'])
     online = serializers.BooleanField(default=True)
     instructors = serializers.SerializerMethodField()
     participants = serializers.SerializerMethodField()
@@ -106,7 +106,7 @@ class ParticipantOfSeminarSerializer(serializers.ModelSerializer):
     last_name = serializers.CharField(source='user.last_name')
 
     joined_at = serializers.DateTimeField(source='created_at')
-    is_active = serializers.BooleanField()
+    # is_active = serializers.BooleanField()
 
     class Meta:
         model = UserSeminar
